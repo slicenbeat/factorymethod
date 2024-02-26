@@ -8,7 +8,7 @@ import com.example.transport.motorcycle.*;
 public class Main {
     public static void main(String[] args) throws CloneNotSupportedException, NoSuchModelNameException {
         // Create and work with cars
-        Transport cars = TransportClient.createInstance("BMW", 4);
+        Transport cars = TransportClient.createInstance("BMW", 3);
         System.out.println(cars.toString());
         System.out.println(cars.getClass());
         TransportClient.printNames(cars);

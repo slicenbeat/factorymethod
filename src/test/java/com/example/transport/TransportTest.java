@@ -113,4 +113,26 @@ public abstract class TransportTest {
             transport.setNameByName("Model 9999", "NOT EXISTING MODEL NAME");
         });
     }
+
+    @Test
+    public void changeNameOnlyOnClonnedTransport()
+            throws NoSuchModelNameException, DuplicateModelNameException, CloneNotSupportedException {
+        Transport clonnedTransport = transport.clone();
+        clonnedTransport.setNameByName("new Model Name", "ToyotaModel 1");
+        String[] expectedNames = { "ToyotaModel 1", "ToyotaModel 2", "ToyotaModel 3" };
+        String[] expectedNamesFromClonnedTransport = { "new Model Name", "ToyotaModel 2", "ToyotaModel 3" };
+
+        assertArrayEquals(expectedNamesFromClonnedTransport, clonnedTransport.getNames());
+        assertArrayEquals(expectedNames, transport.getNames());
+    }
+
+    @Test
+    public void changePriceOnlyOnClonnedTransport()
+            throws NoSuchModelNameException, DuplicateModelNameException, CloneNotSupportedException {
+        Transport clonnedTransport = transport.clone();
+        clonnedTransport.setPriceByName(90, "ToyotaModel 2");
+        assertEquals(90, clonnedTransport.getPriceByName("ToyotaModel 2"));
+        assertEquals(2, transport.getPriceByName("ToyotaModel 2"));
+    }
+
 }
