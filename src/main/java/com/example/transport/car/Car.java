@@ -62,23 +62,26 @@ public class Car implements Transport, Cloneable {
 
     public void setNameByName(String name, String oldName)
             throws NoSuchModelNameException, DuplicateModelNameException {
-
-        int modelIndex = this.getIndexByName(name);
-        if (modelIndex != -1) {
-            throw new DuplicateModelNameException(name);
+        int toUpdateModelIndex = -1;
+        for (int i = 0; i < this.models.length; i++) {
+            if (models[i].name.equals(name)) {
+                throw new DuplicateModelNameException(name);
+            }
+            if (models[i].name.equals(oldName)) {
+                toUpdateModelIndex = i;
+            }
         }
-
-        Model model = this.getModelByName(oldName);
-        model.setName(name);
+        if (toUpdateModelIndex == -1) {
+            throw new NoSuchModelNameException(oldName);
+        }
+        models[toUpdateModelIndex].setName(name);
     }
 
     public void add(String name, double price) throws DuplicateModelNameException {
         if (this.getIndexByName(name) != -1) {
             throw new DuplicateModelNameException(name);
         }
-
-        Model[] modelsCopies = Arrays.copyOf(this.models, this.models.length + 1);
-        this.models = modelsCopies;
+        this.models = Arrays.copyOf(this.models, this.models.length + 1);
         this.models[this.models.length - 1] = new Model(name, price);
     }
 
@@ -102,25 +105,9 @@ public class Car implements Transport, Cloneable {
     }
 
     private void removeByIndex(int deletedModelIndex) {
-        Model[] modelsCopies = Arrays.copyOf(this.models, this.models.length);
-        Model[] modelsWithoutDeletedModel = new Model[modelsCopies.length - 1];
-
-        System.arraycopy(
-                modelsCopies,
-                0,
-                modelsWithoutDeletedModel,
-                0,
-                deletedModelIndex);
-
-        System.arraycopy(
-                modelsCopies,
-                deletedModelIndex + 1,
-                modelsWithoutDeletedModel,
-                modelsCopies.length - deletedModelIndex - 1,
-                deletedModelIndex);
-
-        this.models = modelsWithoutDeletedModel;
-
+        System.arraycopy(this.models, deletedModelIndex + 1, this.models, deletedModelIndex,
+                this.models.length - 1 - deletedModelIndex);
+        this.models = Arrays.copyOf(this.models, this.models.length - 1);
     }
 
     private int getIndexByName(String name) {

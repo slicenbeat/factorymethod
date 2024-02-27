@@ -54,8 +54,14 @@ public class Motorcycle implements Transport, Cloneable {
         this.initHead(brand + "Model 1", 1);
         Model current = this.head;
         for (int i = 1; i < this.length; i++) {
-            current.next = new Model(brand + "Model " + (i + 1), i + 1);
-            current.next.prev = current;
+            Model newModel = new Model(brand + "Model " + (i + 1), i + 1);
+
+            newModel.prev = current;
+            current.next = newModel;
+
+            newModel.next = head;
+            head.prev = newModel;
+
             current = current.next;
         }
     }
@@ -144,18 +150,22 @@ public class Motorcycle implements Transport, Cloneable {
 
     public void setNameByName(String name, String oldName)
             throws NoSuchModelNameException, DuplicateModelNameException {
+        Model modelToUpdate = null;
+
         Model current = this.head;
         for (int modelIndex = 0; modelIndex < this.length; modelIndex++) {
             if (current.name.equals(name)) {
                 throw new DuplicateModelNameException(name);
             }
             if (current.name.equals(oldName)) {
-                current.name = name;
-                return;
+                modelToUpdate = current;
             }
             current = current.next;
         }
-        throw new NoSuchModelNameException(name);
+        if (modelToUpdate == null) {
+            throw new NoSuchModelNameException(oldName);
+        }
+        modelToUpdate.name = name;
     }
 
     public void add(String name, double price) throws DuplicateModelNameException {
@@ -183,10 +193,15 @@ public class Motorcycle implements Transport, Cloneable {
             }
             current = current.next;
         }
-        Model last = this.head.prev;
-        last.next = new Model(name, price);
-        last.next.prev = last;
-        last.next.next = this.head;
+        Model last = head.prev;
+        Model newModel = new Model(name, price);
+
+        last.next = newModel;
+        newModel.prev = last;
+
+        head.prev = newModel;
+        newModel.next = head;
+
         this.length++;
     }
 

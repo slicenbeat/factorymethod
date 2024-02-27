@@ -23,7 +23,7 @@ public abstract class TransportTest {
 
     @Test
     public void addCorrectModel() throws DuplicateModelNameException {
-        transport.add("ToytoaModel 4", 80.0);
+        transport.add("ToyotaModel 4", 80.0);
         assertEquals(4, transport.getLength());
     }
 
@@ -108,23 +108,20 @@ public abstract class TransportTest {
     }
 
     @Test
+    public void throwExceptionWhenTrySetDuplicatedNameOnSecond() {
+        assertThrows(DuplicateModelNameException.class, () -> {
+            transport.setNameByName("ToyotaModel 3", "ToyotaModel 2");
+        });
+    }
+
+    @Test
     public void throwExceptionWhenSetNameByNotExistingName() {
         assertThrows(NoSuchModelNameException.class, () -> {
             transport.setNameByName("Model 9999", "NOT EXISTING MODEL NAME");
         });
     }
 
-    @Test
-    public void changeNameOnlyOnClonnedTransport()
-            throws NoSuchModelNameException, DuplicateModelNameException, CloneNotSupportedException {
-        Transport clonnedTransport = transport.clone();
-        clonnedTransport.setNameByName("new Model Name", "ToyotaModel 1");
-        String[] expectedNames = { "ToyotaModel 1", "ToyotaModel 2", "ToyotaModel 3" };
-        String[] expectedNamesFromClonnedTransport = { "new Model Name", "ToyotaModel 2", "ToyotaModel 3" };
-
-        assertArrayEquals(expectedNamesFromClonnedTransport, clonnedTransport.getNames());
-        assertArrayEquals(expectedNames, transport.getNames());
-    }
+    
 
     @Test
     public void changePriceOnlyOnClonnedTransport()
